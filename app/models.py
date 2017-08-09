@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class Moneda(models.Model):
 	nombre = models.TextField(null=False)
 	simbolo = models.TextField(null=False)
-	valor_dolar = models.TextField(null=False)
+	valor_dolar = models.DecimalField(max_digits=30, decimal_places=5, null=False)
 
 class Operacion(models.Model):
 	importe = models.DecimalField(max_digits=30, decimal_places=5, null=False)
