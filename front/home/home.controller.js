@@ -5,41 +5,59 @@
         .module('app')
         .controller('HomeController', HomeController);
 
-    HomeController.$inject = ['UserService', '$rootScope'];
-    function HomeController(UserService, $rootScope) {
+    HomeController.$inject = ['$location', 'UserService', 'AuthenticationService', '$rootScope'];
+    function HomeController($location, UserService, AuthenticationService, $rootScope) {
         var vm = this;
 
         vm.user = null;
-        vm.allUsers = [];
-        vm.deleteUser = deleteUser;
+        vm.operacionesEnviadas = [];
+        vm.operacionesEntrantes = [];
+        vm.logout = logout;
+        vm.addNew = addNew;
 
         initController();
 
         function initController() {
-            loadCurrentUser();
-            loadAllUsers();
-        }
 
-        function loadCurrentUser() {
-            UserService.GetByUsername($rootScope.globals.currentUser.username)
+            var promise = UserService.GetByUsername($rootScope.globals.currentUser.username)
                 .then(function (user) {
-                    vm.user = user;
+                    vm.user = user.data;
+                    loadOperacionesEnviadas(vm.user.id);
+                    loadOperacionesEntrantes(vm.user.id);
+                })
+                .catch(function (e) {
+                    console.error(e);
                 });
         }
 
-        function loadAllUsers() {
-            UserService.GetAll()
-                .then(function (users) {
-                    vm.allUsers = users;
-                });
-        }
-
-        function deleteUser(id) {
-            UserService.Delete(id)
-            .then(function () {
-                loadAllUsers();
+        function loadOperacionesEnviadas(id) {
+            UserService.GetOperacionesEnviadas(id)
+            .then(function (op) {
+                vm.operacionesEnviadas = op;
+            })
+            .catch(function (e) {
+                console.error(e);
             });
         }
+
+        function loadOperacionesEntrantes(id) {
+            UserService.GetOperacionesRecibidas(id)
+                .then(function (op) {
+                    vm.operacionesEntrantes = op;
+                })
+                .catch(function (e) {
+                    console.error(e);
+                });
+        }
+
+        function logout() {
+            AuthenticationService.Logout();
+        }
+
+        function addNew() {
+            $location.path('/user/' + vm.user.id + '/operaciones/new');
+        }
+
     }
 
 })();

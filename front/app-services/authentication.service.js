@@ -5,22 +5,26 @@
         .module('app')
         .factory('AuthenticationService', AuthenticationService);
 
-    AuthenticationService.$inject = ['$http', '$cookies', '$rootScope', '$timeout', 'UserService'];
+    AuthenticationService.$inject = ['$location', '$http', '$cookies', '$rootScope', '$timeout', 'UserService'];
 
     function getAjaxConfig(method, endpoint, data) {
         return {
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
             url: '/' + (endpoint || ''),
             method: method,
-            data: data || ''
+            data: data || '',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Data-Type': 'json',
+                'Authorization': 'Basic' + Base64.encode(data || '')
+            }
         };
     }
 
-    function AuthenticationService($http, $cookies, $rootScope, $timeout, UserService) {
+    function AuthenticationService($location, $http, $cookies, $rootScope, $timeout, UserService) {
         var service = {};
 
         service.Login = Login;
+        service.Logout = Logout;
         service.SetCredentials = SetCredentials;
         service.ClearCredentials = ClearCredentials;
 
@@ -43,27 +47,27 @@
             }, 1000);*/
 
             var data = { "username": username, "password": password };
-            var promise = $.ajax(getAjaxConfig('POST', 'login/', JSON.stringify(data)));
-            promise.done(function(response) {
-                console.log(response);
-                callback({ success: true });
-            });
-            promise.fail(function(response) {
-                callback({ success: false, message: response.responseJSON.message});
-            });
+            $http(getAjaxConfig('POST', 'login/', JSON.stringify(data)))
+                .then(function(response) {
+                    console.log(response);
+                    callback({ success: true });
+                })
+                .catch(function(response) {
+                    callback({ success: false, message: response.responseJSON.message});
+                });
 
         }
 
-        function Logout(username, password) {
+        function Logout() {
 
-            var data = { "username": username, "password": password };
-            var promise = $.ajax(getAjaxConfig('POST', 'logout/'));
-            promise.done(function(response) {
-                $location.path('/login');
-            });
-            promise.fail(function(response) {
-                console.error(response);
-            });
+            $http(getAjaxConfig('POST', 'logout/'))
+                .then(function(response) {
+                    ClearCredentials();
+                    $location.path('/login');
+                })
+                .catch(function(response) {
+                    console.error(response);
+                });
 
         }
 

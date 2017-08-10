@@ -1,3 +1,10 @@
 ﻿a {
     cursor: pointer;
 }
+
+.title-with-button {
+  display: inline-block;
+  font-size: 2.5em;
+  margin-bottom: 15px;
+  margin-right: 20px;
+}

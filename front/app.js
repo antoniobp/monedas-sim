@@ -27,6 +27,12 @@
                 controllerAs: 'vm'
             })
 
+            .when('/user/:id/operaciones/new', {
+                controller: 'OperacionesController',
+                templateUrl: 'static/operaciones/operaciones_new.view.html',
+                controllerAs: 'vm'
+            })
+
             .otherwise({ redirectTo: '/login' });
     }
 
