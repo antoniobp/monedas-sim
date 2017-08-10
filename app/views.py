@@ -16,7 +16,7 @@ from rest_framework.decorators import api_view, permission_classes, parser_class
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from app.models import Operacion, Moneda
-from app.serializers import UserSerializer, OperacionSerializer
+from app.serializers import UserSerializer, OperacionSerializer, MonedaSerializer
 
 
 @api_view(['POST'])
@@ -135,8 +135,9 @@ def usuario_datos(request, id_user):
             'username': usuario.username,
             'first_name': usuario.first_name,
             'last_name': usuario.last_name,
-            'email': usuario.last_name
-        }
+            'email': usuario.last_name,
+            'id': usuario.id
+        })
 
     # ACTUALIZA LOS DATOS DE UN USUARIO VALIDANDO LOS CAMPOS INGRESADOS
     elif request.method == 'PUT':
@@ -173,11 +174,12 @@ def usuario_datos(request, id_user):
 
 
 @api_view(['GET', 'POST'])
-def operacion_lista(request, id_user):
+def operacion_lista(request, id_user, tipo_operacion):
     """
     Lista (GET) todas las operaciones hechas por un usuario o crea (POST) una nueva
     :param request:
     :param id_user: el id del usuario
+    :param tipo_operacion: si es recibida o de envio
     :return:
     """
 
@@ -191,8 +193,12 @@ def operacion_lista(request, id_user):
     # LISTA LAS OPERACIONES DE UN USUARIO
     if request.method == 'GET':
 
-        lista_operaciones = Operacion.objects.filter(remitente=id_user)
+        if (tipo_operacion == 1):
+            lista_operaciones = Operacion.objects.filter(remitente=id_user)
+        else:
+            lista_operaciones = Operacion.objects.filter(destinatario=id_user)
         serializers = OperacionSerializer(lista_operaciones, many=True)
+        return Response(serializers.data)
 
     # CREA UN USUARIO
     elif request.method == 'POST':
@@ -244,3 +250,20 @@ def operacion_datos(request, id_user, id_operacion):
         "remitente": operacion.remitente.first_name + operacion.remitente.last_name,
         "destinatario": operacion.destinatario.first_name + operacion.destinatario.last_name
     })
+
+
+@api_view(['GET'])
+def moneda_lista(request):
+    """
+    Lista (GET) todas las monedas disponibles
+    :param request:
+    :param id_user: el id del usuario
+    :return:
+    """
+
+    # LISTA LAS MONEDAS
+    if request.method == 'GET':
+
+        lista_monedas = Moneda.objects.all()
+        serializers = MonedaSerializer(lista_monedas, many=True)
+        return Response(serializers.data)

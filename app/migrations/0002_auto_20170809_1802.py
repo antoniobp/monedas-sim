@@ -11,9 +11,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
+        migrations.RemoveField(
+            model_name='moneda',
+            name='valor_dolar'
+        ),
+        migrations.AddField(
             model_name='moneda',
             name='valor_dolar',
-            field=models.DecimalField(decimal_places=5, max_digits=30),
+            field=models.DecimalField(max_digits=30, decimal_places=5),
         ),
     ]
