@@ -97,6 +97,8 @@ def usuario_lista(request):
             if not data:
                 return Response({"message": "No se enviaron datos"}, status=status.HTTP_400_BAD_REQUEST)
 
+            print(data)
+
             # ENCRIPTA EL PASSWORD
             data['password'] = make_password(data['password'])
             serializer = UserSerializer(data=data)
@@ -129,7 +131,7 @@ def usuario_datos(request, id_user):
         usuario = get_object_or_404(Usuario, pk=int(id_user))
     else: 
         usuario = get_object_or_404(User, username=id_user)
-        usuario = get_object_or_404(Usuario, pk=usuario.id)
+        usuario = get_object_or_404(Usuario, user_id=usuario.id)
 
     # OBTIENE UN USUARIO
     if request.method == 'GET':
@@ -190,7 +192,7 @@ def operacion_lista(request, id_user, tipo_operacion):
 
     # VERIFICA QUE EL USUARIO ESTE ACCEDIENDO A SUS DATOS Y NO A LOS DE OTRO
     if not request.user.is_staff:
-        if request.user.id != usuario.id:
+        if request.user.id != usuario.user_id:
             return Response({"message": "No tiene permisos para acceder"}, status=status.HTTP_401_UNAUTHORIZED)
 
     # LISTA LAS OPERACIONES DE UN USUARIO
