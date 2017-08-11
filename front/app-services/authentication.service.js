@@ -49,11 +49,10 @@
             var data = { "username": username, "password": password };
             $http(getAjaxConfig('POST', 'login/', JSON.stringify(data)))
                 .then(function(response) {
-                    console.log(response);
                     callback({ success: true });
                 })
                 .catch(function(response) {
-                    callback({ success: false, message: response.responseJSON.message});
+                    callback({ success: false, message: response.data.message});
                 });
 
         }

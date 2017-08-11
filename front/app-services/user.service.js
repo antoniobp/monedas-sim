@@ -32,6 +32,7 @@
         service.GetMonedas = GetMonedas;
         service.GetOperacionesEnviadas = GetOperacionesEnviadas;
         service.GetOperacionesRecibidas = GetOperacionesRecibidas;
+        service.CreateOperacion = CreateOperacion;
 
         return service;
 
@@ -80,9 +81,9 @@
             return $http(getConfig('GET', 'operaciones/' + id + '/0'));
         }
 
-        function CreateOperacion(id) {
+        function CreateOperacion(id, data) {
             //return $http.get('/usuarios/' + id).then(handleSuccess, handleError('Error getting user by id'));
-            return $http(getConfig('POST', 'operaciones/' + id + '/1'));
+            return $http(getConfig('POST', 'operaciones/' + id + '/1/', JSON.stringify(data)));
         }
 
         // private functions

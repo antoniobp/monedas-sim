@@ -32,18 +32,18 @@
 
         function loadOperacionesEnviadas(id) {
             UserService.GetOperacionesEnviadas(id)
-            .then(function (op) {
-                vm.operacionesEnviadas = op;
-            })
-            .catch(function (e) {
-                console.error(e);
-            });
+                .then(function (op) {
+                    vm.operacionesEnviadas = op.data;
+                })
+                .catch(function (e) {
+                    console.error(e);
+                });
         }
 
         function loadOperacionesEntrantes(id) {
             UserService.GetOperacionesRecibidas(id)
                 .then(function (op) {
-                    vm.operacionesEntrantes = op;
+                    vm.operacionesEntrantes = op.data;
                 })
                 .catch(function (e) {
                     console.error(e);
