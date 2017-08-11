@@ -1,22 +1,23 @@
 # -*- encoding: utf-8 -*-
 import datetime
 from app.models import (
-    Moneda, Operacion)
+    Moneda, Operacion, Usuario)
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(required=False)
-    password = serializers.CharField(required=False)
-    email = serializers.EmailField(required=False)
-    first_name = serializers.CharField(required=False)
-    last_name = serializers.CharField(required=False)
+    username = serializers.CharField(source='user.username', required=False)
+    password = serializers.CharField(source='user.password', required=False)
+    email = serializers.EmailField(source='user.email', required=False)
+    first_name = serializers.CharField(source='user.first_name', required=False)
+    last_name = serializers.CharField(source='user.last_name', required=False)
+    balance = serializers.DecimalField(max_digits=30, decimal_places=5, required=False, allow_null=True)
 
     class Meta:
-        model = User
+        model = Usuario
         fields = (
-            'username', 'password', 'email', 'first_name', 'last_name')
+            'username', 'password', 'email', 'first_name', 'last_name', 'balance')
 
 
 class MonedaSerializer(serializers.ModelSerializer):
@@ -27,7 +28,7 @@ class MonedaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Moneda
         fields = (
-            'nombre', 'simbolo', 'valor_dolar')
+            'id', 'nombre', 'simbolo', 'valor_dolar')
 
 
 class OperacionSerializer(serializers.ModelSerializer):
@@ -40,4 +41,4 @@ class OperacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Operacion
         fields = (
-            'importe', 'fecha', 'moneda', 'remitente', 'destinatario')
+            'id', 'importe', 'fecha', 'moneda', 'remitente', 'destinatario')

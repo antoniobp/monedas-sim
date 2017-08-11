@@ -1,21 +1,17 @@
 # -*- encoding: utf-8 -*-
 import json
 import numbers
-import random
-import string
-import datetime
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
-from app.models import Operacion, Moneda
+from app.models import Operacion, Moneda, Usuario
 from app.serializers import UserSerializer, OperacionSerializer, MonedaSerializer
 
 
@@ -29,8 +25,10 @@ def auth_login(request):
     data = JSONParser().parse(request)
     try:
         user = authenticate(username=data['username'], password=data['password'])
+        if user is None:
+            return Response({"message": "Error en los datos ingresados"}, status=status.HTTP_400_BAD_REQUEST)
     except KeyError:
-        return Response({"messsage": "Falla en autenticacion"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Falla en autenticacion"}, status=status.HTTP_400_BAD_REQUEST)
 
     if user.is_staff:
         return Response({"message": "El usuario admin debe loguearse en /admin"}, status=status.HTTP_400_BAD_REQUEST)
@@ -47,7 +45,7 @@ def auth_login(request):
                 "last_login": str(user.last_login),
                 "id": user.id
             }, status=status.HTTP_202_ACCEPTED)
-    return Response({"messsage": "No es usuario"}, status=status.HTTP_401_UNAUTHORIZED)
+    return Response({"message": "No es usuario"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['POST'])
@@ -58,7 +56,7 @@ def auth_logout(request):
     :return:
     """
     logout(request)
-    return HttpResponse(json.dumps({"messsage": "Logout exitoso"}), content_type="application/json")
+    return HttpResponse(json.dumps({"message": "Logout exitoso"}), content_type="application/json")
 
 
 @api_view(['GET', 'POST'])
@@ -72,15 +70,17 @@ def usuario_lista(request):
     if request.method == 'GET':
         try:
             lista_json = []
-            lista_users = User.objects.all()
+            lista_users = Usuario.objects.all()
 
             for user in lista_users:
-                if user.is_active and not user.is_staff:
+                if user.user.is_active and not user.user.is_staff:
                     user_json = {
-                        'username': user.username,
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
-                        'email': user.email
+                        'username': user.user.username,
+                        'first_name': user.user.first_name,
+                        'last_name': user.user.last_name,
+                        'email': user.user.email,
+                        'id': user.id,
+                        'balance': user.balance
                     }
                     lista_json.append(user_json)
 
@@ -125,18 +125,20 @@ def usuario_datos(request, id_user):
     :return:
     """
     if isinstance(id_user, numbers.Number):
-        usuario = get_object_or_404(User, pk=id_user)
+        usuario = get_object_or_404(Usuario, pk=id_user)
     else: 
         usuario = get_object_or_404(User, username=id_user)
+        usuario = get_object_or_404(Usuario, pk=usuario.id)
 
     # OBTIENE UN USUARIO
     if request.method == 'GET':
         return Response({
-            'username': usuario.username,
-            'first_name': usuario.first_name,
-            'last_name': usuario.last_name,
-            'email': usuario.last_name,
-            'id': usuario.id
+            'username': usuario.user.username,
+            'first_name': usuario.user.first_name,
+            'last_name': usuario.user.last_name,
+            'email': usuario.user.email,
+            'id': usuario.id,
+            'balance': usuario.balance
         })
 
     # ACTUALIZA LOS DATOS DE UN USUARIO VALIDANDO LOS CAMPOS INGRESADOS
@@ -169,8 +171,8 @@ def usuario_datos(request, id_user):
         if usuario.validar_delete():
             usuario.user.delete()
             usuario.delete()
-            return Response({"messsage": "El usuario ha sido borrado"}, status=status.HTTP_204_NO_CONTENT)
-        return Response({"messsage": "No puede borrar"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "El usuario ha sido borrado"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "No puede borrar"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST'])
@@ -183,24 +185,26 @@ def operacion_lista(request, id_user, tipo_operacion):
     :return:
     """
 
-    usuario = get_object_or_404(User, pk=id_user)
+    usuario = get_object_or_404(Usuario, pk=id_user)
 
     # VERIFICA QUE EL USUARIO ESTE ACCEDIENDO A SUS DATOS Y NO A LOS DE OTRO
     if not request.user.is_staff:
         if request.user.id != usuario.id:
-            return Response({"messsage": "No tiene permisos para acceder"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"message": "No tiene permisos para acceder"}, status=status.HTTP_401_UNAUTHORIZED)
 
     # LISTA LAS OPERACIONES DE UN USUARIO
     if request.method == 'GET':
 
-        if (tipo_operacion == 1):
-            lista_operaciones = Operacion.objects.filter(remitente=id_user)
-        else:
-            lista_operaciones = Operacion.objects.filter(destinatario=id_user)
-        serializers = OperacionSerializer(lista_operaciones, many=True)
-        return Response(serializers.data)
+        operaciones_json = []
+        lista_operaciones = Operacion.objects.all()
+        for operacion in lista_operaciones:
+            if int(tipo_operacion) == 1 and int(operacion.remitente.id) == int(id_user):
+                operaciones_json.append(operacion.as_json())
+            elif int(tipo_operacion) == 0 and int(operacion.destinatario.id) == int(id_user):
+                operaciones_json.append(operacion.as_json())
+        return Response(operaciones_json)
 
-    # CREA UN USUARIO
+    # CREA UNA OPERACION
     elif request.method == 'POST':
         try:
             data = JSONParser().parse(request)
@@ -209,7 +213,17 @@ def operacion_lista(request, id_user, tipo_operacion):
             if not data:
                 return Response({"message": "No se enviaron datos"}, status=status.HTTP_400_BAD_REQUEST)
 
-            serializer = OperacionSerializer(data=data)
+            operacion = Operacion()
+            operacion.destinatario = get_object_or_404(Usuario, pk=data['destinatario'])
+            operacion.remitente = get_object_or_404(Usuario, pk=data['remitente'])
+            operacion.moneda = get_object_or_404(Moneda, pk=data['moneda'])
+
+            operacion.destinatario.balance -= operacion.moneda.valor_dolar * operacion.importe
+            operacion.destinatario.save()
+            operacion.remitente.balance += operacion.moneda.valor_dolar * operacion.importe
+            operacion.remitente.save()
+
+            serializer = OperacionSerializer(operacion, data=data)
 
             if serializer.is_valid():
                 serializer.save()
@@ -217,8 +231,6 @@ def operacion_lista(request, id_user, tipo_operacion):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except KeyError:
             return Response({"message": "Atributos incorrectos"}, status=status.HTTP_400_BAD_REQUEST)
-        except IntegrityError:
-            return Response({"message": "Atributos duplicados"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -231,17 +243,17 @@ def operacion_datos(request, id_user, id_operacion):
     :return:
     """
 
-    usuario = get_object_or_404(User, pk=id_user)
+    usuario = get_object_or_404(Usuario, pk=id_user)
     operacion = get_object_or_404(Operacion, pk=id_operacion)
 
     # VERIFICA QUE EL USUARIO ESTE ACCEDIENDO A SUS DATOS Y NO A LOS DE OTRO
     if not request.user.is_staff:
         if request.user.id != usuario.id:
-            return Response({"messsage": "No tiene permisos para acceder"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"message": "No tiene permisos para acceder"}, status=status.HTTP_401_UNAUTHORIZED)
 
     # VERIFICA QUE LA OPERACION SE CORRESPONDA CON EL USURIO
     if operacion.remitente != usuario:
-        return Response({"messsage": "La operacion no pertenece al usuario"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "La operacion no pertenece al usuario"}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({
         "importe": operacion.importe,
