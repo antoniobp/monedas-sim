@@ -1,1 +1,1 @@
-web: gunicorn superavit.wsgi -b 0.0.0.0:$PORT
+web: gunicorn monedasSim.wsgi -b 0.0.0.0:$PORT
