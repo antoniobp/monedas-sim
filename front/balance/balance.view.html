@@ -1,0 +1,26 @@
+﻿<div class="container">
+    <div class="row">
+        <h1>Detalle del Balance</h1>
+        <h2>{{ vm.user.first_name }} {{ vm.user.last_name }}</h2>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-1 col-sm-12 table-responsive">
+            <table class="table" ng-show="vm.monedas.length > 0">
+                <thead>
+                    <tr>
+                        <th>Moneda</th>
+                        <th>Valor Dólar</th>
+                        <th>Importe Correspondiente</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="moneda in vm.monedas">
+                        <td>{{ moneda.nombre }}</td>
+                        <td>{{ moneda.valor_dolar | number }} U$D</td>
+                        <td>{{ (vm.user.balance / moneda.valor_dolar) | number:2 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

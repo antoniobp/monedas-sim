@@ -37,52 +37,42 @@
         return service;
 
         function GetAll() {
-            //return $http.get('/usuarios').then(handleSuccess, handleError('Error getting all users'));
             return $http(getConfig('GET', 'usuarios/'));
         }
 
         function GetById(id) {
-            //return $http.get('/usuarios/' + id).then(handleSuccess, handleError('Error getting user by id'));
             return $http(getConfig('GET', 'usuarios/' + id));
         }
 
         function GetByUsername(username) {
-            //return $http.get('/usuarios/' + username).then(handleSuccess, handleError('Error getting user by username'));
             return $http(getConfig('GET', 'usuarios/' + username));
         }
 
         function Create(user) {
-            //return $http.post('/usuarios/', user).then(handleSuccess, handleError('Error creating user'));
             return $http(getConfig('POST', 'usuarios/', JSON.stringify(user)));
         }
 
         function Update(user) {
-            //return $http.put('/usuarios/' + user.id, user).then(handleSuccess, handleError('Error updating user'));
             return $http(getConfig('PUT', 'usuarios/' + user.id, JSON.stringify(user)));
         }
 
         function Delete(id) {
-            //return $http.delete('/usuarios/' + id).then(handleSuccess, handleError('Error deleting user'));
             return $http(getConfig('DELETE', 'usuarios/' + id));
         }
 
         function GetMonedas(id) {
-            //return $http.get('/usuarios/' + id).then(handleSuccess, handleError('Error getting user by id'));
             return $http(getConfig('GET', 'monedas/'));
         }
 
         function GetOperacionesEnviadas(id) {
-            //return $http.get('/usuarios/' + id).then(handleSuccess, handleError('Error getting user by id'));
             return $http(getConfig('GET', 'operaciones/' + id + '/1'));
         }
 
         function GetOperacionesRecibidas(id) {
-            //return $http.get('/usuarios/' + id).then(handleSuccess, handleError('Error getting user by id'));
             return $http(getConfig('GET', 'operaciones/' + id + '/0'));
         }
 
         function CreateOperacion(id, data) {
-            //return $http.get('/usuarios/' + id).then(handleSuccess, handleError('Error getting user by id'));
             return $http(getConfig('POST', 'operaciones/' + id + '/1/', JSON.stringify(data)));
         }
 

@@ -12,8 +12,6 @@
 
     <nav class="navbar navbar-default" ng-show="$root.globals.currentUser">
         <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Datos Usuario</a></li>
-            <li role="separator" class="divider"></li>
             <li><a id="cerrar">Cerrar Sesión</a></li>
         </ul>
     </nav>
@@ -45,6 +43,7 @@
     <script src="{% static "operaciones/operaciones.controller.js" %}"></script>
     <script src="{% static "login/login.controller.js" %}"></script>
     <script src="{% static "register/register.controller.js" %}"></script>
+    <script src="{% static "balance/balance.controller.js" %}"></script>
 
     <script>
         //TODO: sacar de aca
@@ -57,7 +56,6 @@
                     headers: {
                         'Content-Type': 'application/json; charset=utf-8',
                         'Data-Type': 'json',
-                        'Authorization': 'Basic'
                     }
                 });
                 promise.done(function(response) {

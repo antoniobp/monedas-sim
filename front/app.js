@@ -27,6 +27,18 @@
                 controllerAs: 'vm'
             })
 
+            .when('/user/:id/', {
+                controller: 'RegisterController',
+                templateUrl: 'static/register/register.view.html',
+                controllerAs: 'vm'
+            })
+
+            .when('/user/:id/balance', {
+                controller: 'BalanceController',
+                templateUrl: 'static/balance/balance.view.html',
+                controllerAs: 'vm'
+            })
+
             .when('/user/:id/operaciones/new', {
                 controller: 'OperacionesController',
                 templateUrl: 'static/operaciones/operaciones_new.view.html',

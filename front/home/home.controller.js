@@ -14,12 +14,14 @@
         vm.operacionesEntrantes = [];
         vm.logout = logout;
         vm.addNew = addNew;
+        vm.editUser = editUser;
+        vm.balanceDetail = balanceDetail;
 
         initController();
 
         function initController() {
 
-            var promise = UserService.GetByUsername($rootScope.globals.currentUser.username)
+            UserService.GetByUsername($rootScope.globals.currentUser.username)
                 .then(function (user) {
                     vm.user = user.data;
                     loadOperacionesEnviadas(vm.user.id);
@@ -56,6 +58,14 @@
 
         function addNew() {
             $location.path('/user/' + vm.user.id + '/operaciones/new');
+        }
+
+        function editUser() {
+            $location.path('/user/' + vm.user.id);
+        }
+
+        function balanceDetail() {
+            $location.path('/user/' + vm.user.id + '/balance');
         }
 
     }

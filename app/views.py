@@ -124,8 +124,9 @@ def usuario_datos(request, id_user):
     :param id_user: el id del usuario que se quiere obtener, borrar o modificar
     :return:
     """
-    if isinstance(id_user, numbers.Number):
-        usuario = get_object_or_404(Usuario, pk=id_user)
+    print(id_user.isdigit())
+    if id_user.isdigit():
+        usuario = get_object_or_404(Usuario, pk=int(id_user))
     else: 
         usuario = get_object_or_404(User, username=id_user)
         usuario = get_object_or_404(Usuario, pk=usuario.id)

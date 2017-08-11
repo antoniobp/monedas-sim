@@ -1,35 +1,39 @@
 ﻿<div class="col-md-6 col-md-offset-3">
-    <h2>Registrarse</h2>
+    <h2 ng-show="!vm.id">Registrarse</h2>
+    <h2 ng-show="vm.id">Editar Datos de Usuario</h2>
     <form name="form" ng-submit="vm.register()" role="form">
         <div class="form-group" ng-class="{ 'has-error': form.first_name.$dirty && form.first_name.$error.required }">
-            <label for="username">Nombre</label>
+            <label for="first_name">Nombre</label>
             <input type="text" name="first_name" id="first_name" class="form-control" ng-model="vm.user.first_name" required />
             <span ng-show="form.first_name.$dirty && form.first_name.$error.required" class="help-block">Es requerido</span>
         </div>
         <div class="form-group" ng-class="{ 'has-error': form.last_name.$dirty && form.last_name.$error.required }">
-            <label for="username">Apellido</label>
-            <input type="text" name="last_name" id="Text1" class="form-control" ng-model="vm.user.last_name" required />
+            <label for="last_name">Apellido</label>
+            <input type="text" name="last_name" id="last_name" class="form-control" ng-model="vm.user.last_name" required />
             <span ng-show="form.last_name.$dirty && form.last_name.$error.required" class="help-block">Es requerido</span>
         </div>
         <div class="form-group" ng-class="{ 'has-error': form.email.$dirty && form.email.$error.required }">
-            <label for="username">E-mail</label>
-            <input type="text" name="email" id="Text1" class="form-control" ng-model="vm.user.email" required />
+            <label for="email">E-mail</label>
+            <input type="email" name="email" id="email" class="form-control" ng-model="vm.user.email" required />
             <span ng-show="form.email.$dirty && form.email.$error.required" class="help-block">Es requerido</span>
+            <span ng-show="form.$error.email" class="help-block">Email inválido</span>
         </div>
         <div class="form-group" ng-class="{ 'has-error': form.username.$dirty && form.username.$error.required }">
             <label for="username">Username</label>
             <input type="text" name="username" id="username" class="form-control" ng-model="vm.user.username" required />
             <span ng-show="form.username.$dirty && form.username.$error.required" class="help-block">Es requerido</span>
         </div>
-        <div class="form-group" ng-class="{ 'has-error': form.password.$dirty && form.password.$error.required }">
+        <div class="form-group" ng-class="{ 'has-error': form.password.$dirty && form.password.$error.required }" ng-show="!vm.id">
             <label for="password">Password</label>
             <input type="password" name="password" id="password" class="form-control" ng-model="vm.user.password" required />
             <span ng-show="form.password.$dirty && form.password.$error.required" class="help-block">Es requerido</span>
         </div>
         <div class="form-actions">
-            <button type="submit" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary">Registrar</button>
+            <button type="submit" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary" ng-show="!vm.id">Registrar</button>
+            <button type="submit" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary" ng-show="vm.id">Editar</button>
             <img ng-if="vm.dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-            <a href="#!/login" class="btn btn-link">Cancelar</a>
+            <a href="#!/login" class="btn btn-link" ng-show="!vm.id">Cancelar</a>
+            <a href="#!/" class="btn btn-link" ng-show="vm.id">Cancelar</a>
         </div>
     </form>
 </div>
