@@ -86,17 +86,6 @@
             return $http(getConfig('POST', 'operaciones/' + id + '/1/', JSON.stringify(data)));
         }
 
-        // private functions
-
-        function handleSuccess(res) {
-            return res.data;
-        }
-
-        function handleError(error) {
-            return function () {
-                return { success: false, message: error };
-            };
-        }
     }
 
 })();

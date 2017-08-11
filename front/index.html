@@ -10,17 +10,11 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-default" ng-show="$root.user">
+    <nav class="navbar navbar-default" ng-show="$root.globals.currentUser">
         <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Link</a></li>
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">Datos Usuario</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="#">Cerrar Sesión</a></li>
-                </ul>
-            </li>
+            <li><a href="#">Datos Usuario</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a id="cerrar">Cerrar Sesión</a></li>
         </ul>
     </nav>
     <div class="jumbotron">
@@ -51,5 +45,30 @@
     <script src="{% static "operaciones/operaciones.controller.js" %}"></script>
     <script src="{% static "login/login.controller.js" %}"></script>
     <script src="{% static "register/register.controller.js" %}"></script>
+
+    <script>
+        //TODO: sacar de aca
+        $(document).ready(function () {
+            $("#cerrar").click(function(){
+                var promise = $.ajax({
+                    url: '/logout/',
+                    method: 'POST',
+                    data: '',
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8',
+                        'Data-Type': 'json',
+                        'Authorization': 'Basic'
+                    }
+                });
+                promise.done(function(response) {
+                    window.location.replace('#!/login');
+                })
+                promise.catch(function(response) {
+                    console.error(response);
+                });
+            });
+
+        })
+    </script>
 </body>
 </html>
