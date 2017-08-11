@@ -16,7 +16,7 @@ class Moneda(models.Model):
 class Operacion(models.Model):
     importe = models.DecimalField(max_digits=30, decimal_places=5, null=False)
     fecha = models.DateTimeField(auto_now_add=True, blank=True)
-    moneda = models.OneToOneField('Moneda')
+    moneda = models.ForeignKey('Moneda')
     remitente = models.ForeignKey(Usuario, related_name='%(class)s_operaciones_realizadas')
     destinatario = models.ForeignKey(Usuario, related_name='%(class)s_operaciones_recibidas')
 

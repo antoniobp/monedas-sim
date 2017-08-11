@@ -218,9 +218,9 @@ def operacion_lista(request, id_user, tipo_operacion):
             operacion.remitente = get_object_or_404(Usuario, pk=data['remitente'])
             operacion.moneda = get_object_or_404(Moneda, pk=data['moneda'])
 
-            operacion.destinatario.balance -= operacion.moneda.valor_dolar * operacion.importe
+            operacion.destinatario.balance += operacion.moneda.valor_dolar * data['importe']
             operacion.destinatario.save()
-            operacion.remitente.balance += operacion.moneda.valor_dolar * operacion.importe
+            operacion.remitente.balance -= operacion.moneda.valor_dolar * data['importe']
             operacion.remitente.save()
 
             serializer = OperacionSerializer(operacion, data=data)
