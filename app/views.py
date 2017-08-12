@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 import json
-import numbers
+import decimal
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
@@ -8,7 +8,8 @@ from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from app.models import Operacion, Moneda, Usuario
@@ -16,6 +17,7 @@ from app.serializers import UserSerializer, OperacionSerializer, MonedaSerialize
 
 
 @api_view(['POST'])
+@permission_classes((AllowAny, ))
 def auth_login(request):
     """
     Loguea a un usuario en el sistema
@@ -49,6 +51,7 @@ def auth_login(request):
 
 
 @api_view(['POST'])
+@permission_classes((IsAuthenticated, ))
 def auth_logout(request):
     """
     Cierra la sesion de un usuario
@@ -60,6 +63,7 @@ def auth_logout(request):
 
 
 @api_view(['GET', 'POST'])
+@permission_classes((AllowAny, ))
 def usuario_lista(request):
     """
     Lista (GET) todos los usuarios o crea (POST) un nuevo usuario
@@ -97,8 +101,6 @@ def usuario_lista(request):
             if not data:
                 return Response({"message": "No se enviaron datos"}, status=status.HTTP_400_BAD_REQUEST)
 
-            print(data)
-
             # ENCRIPTA EL PASSWORD
             data['password'] = make_password(data['password'])
             serializer = UserSerializer(data=data)
@@ -119,6 +121,7 @@ def usuario_lista(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes((IsAuthenticated, ))
 def usuario_datos(request, id_user):
     """
     Obtiene (GET), modifica (PUT) o borra (DELETE) un usuario
@@ -126,10 +129,9 @@ def usuario_datos(request, id_user):
     :param id_user: el id del usuario que se quiere obtener, borrar o modificar
     :return:
     """
-    print(id_user.isdigit())
     if id_user.isdigit():
         usuario = get_object_or_404(Usuario, pk=int(id_user))
-    else: 
+    else:
         usuario = get_object_or_404(User, username=id_user)
         usuario = get_object_or_404(Usuario, user_id=usuario.id)
 
@@ -179,6 +181,7 @@ def usuario_datos(request, id_user):
 
 
 @api_view(['GET', 'POST'])
+@permission_classes((IsAuthenticated, ))
 def operacion_lista(request, id_user, tipo_operacion):
     """
     Lista (GET) todas las operaciones hechas por un usuario o crea (POST) una nueva
@@ -221,9 +224,9 @@ def operacion_lista(request, id_user, tipo_operacion):
             operacion.remitente = get_object_or_404(Usuario, pk=data['remitente'])
             operacion.moneda = get_object_or_404(Moneda, pk=data['moneda'])
 
-            operacion.destinatario.balance += operacion.moneda.valor_dolar * data['importe']
+            operacion.destinatario.balance += operacion.moneda.valor_dolar * decimal.Decimal(data['importe'])
             operacion.destinatario.save()
-            operacion.remitente.balance -= operacion.moneda.valor_dolar * data['importe']
+            operacion.remitente.balance -= operacion.moneda.valor_dolar * decimal.Decimal(data['importe'])
             operacion.remitente.save()
 
             serializer = OperacionSerializer(operacion, data=data)
@@ -234,9 +237,12 @@ def operacion_lista(request, id_user, tipo_operacion):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except KeyError:
             return Response({"message": "Atributos incorrectos"}, status=status.HTTP_400_BAD_REQUEST)
+        except TypeError:
+            return Response({"message": "Importe invalido"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def operacion_datos(request, id_user, id_operacion):
     """
     Obtiene (GET) una operacion

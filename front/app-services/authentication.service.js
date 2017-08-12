@@ -38,7 +38,7 @@
                     callback({ success: true });
                 })
                 .catch(function(response) {
-                    callback({ success: false, message: response.data.message});
+                    callback({ success: false, message: response.data.message || response.data.detail});
                 });
 
         }
