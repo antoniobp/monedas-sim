@@ -16,7 +16,7 @@
             data: data || '',
             headers: {
                 'Content-Type': 'application/json',
-                'Data-Type': 'json'
+                'Data-Type': 'json',
             }
         };
     }
