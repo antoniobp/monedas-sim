@@ -8,3 +8,17 @@
     margin-bottom: 15px;
     margin-right: 20px;
 }
+
+.margin-cero{
+    margin:0px !important;
+}
+
+.margin-10-horizontal{
+    margin: 0px 10px !important;
+}
+.container-custom{
+    height: 100%;
+    padding: 10px;
+    display:flex;
+    align-items: center;
+}

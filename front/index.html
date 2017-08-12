@@ -11,23 +11,35 @@
 <body>
 
     <nav class="navbar navbar-default" ng-show="$root.globals.currentUser">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#!/"> <span class="glyphicon glyphicon-home"></span> Simulación de Transferencia de Monedas</a>
+        </div>
         <ul class="nav navbar-nav navbar-right">
-            <li><a id="cerrar">Cerrar Sesión</a></li>
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.first_name }}<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#!/user/{{ user.id }}">Datos de Usuario</a></li>
+                    <li><a href="#!/user/{{ user.id }}/balance">Consultar Balance</a></li>
+                    <li><a id="cerrar">Cerrar Sesión</a></li>
+                </ul>
+            </li>
         </ul>
     </nav>
-    <div class="jumbotron">
-        <div class="container">
-            <div class="col-sm-8 col-sm-offset-2">
+
+        <div class="container container-custom">
+            <div class="col-sm-12 ">
                 <div ng-class="{ 'alert': flash, 'alert-success': flash.type === 'success', 'alert-danger': flash.type === 'error' }" ng-if="flash" ng-bind="flash.message"></div>
                 <div ng-view></div>
             </div>
         </div>
-    </div>
+
 
     <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="//code.angularjs.org/1.6.0/angular.min.js"></script>
     <script src="//code.angularjs.org/1.6.0/angular-route.min.js"></script>
     <script src="//code.angularjs.org/1.6.0/angular-cookies.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
     <script src="{% static "app.js" %}"></script>
     <script src="{% static "app-services/authentication.service.js" %}"></script>

@@ -15,10 +15,11 @@
                 <option ng-repeat="moneda in vm.monedas" value="{{moneda}}">{{moneda.simbolo}} {{moneda.nombre}}</option>
             </select>
         </div>
-        <div class="form-group" ng-class="{ 'has-error': form.importe.$dirty && form.importe.$error.required }">
+        <div class="form-group" ng-class="{ 'has-error': form.importe.$dirty && form.importe.$error.required || (vm.operacion.importe <= 0) }">
             <label for="importe">Importe</label>
-            <input type="number" name="importe" id="importe" class="form-control" ng-model="vm.operacion.importe" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required />
+            <input type="number" name="importe" id="importe" class="form-control" ng-model="vm.operacion.importe" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" min="0" required />
             <span ng-show="form.importe.$dirty && form.importe.$error.required" class="help-block">Es requerido</span>
+            <span ng-show="vm.operacion.importe <= 0" class="help-block">Importe incorrecto</span>
         </div>
 
         <div class="form-actions">

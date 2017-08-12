@@ -37,7 +37,7 @@
                     })
                     .catch(function(response) {
                         console.log(response);
-                        FlashService.Error(response.data.message);
+                        FlashService.Error(response.data.message || response.data.detail);
                         vm.dataLoading = false;
                     });
             } else edit();
@@ -51,7 +51,7 @@
                 })
                 .catch(function(response) {
                     console.log(response);
-                    FlashService.Error(response.message);
+                    FlashService.Error(response.message || response.data.detail);
                     vm.dataLoading = false;
                 });
         }

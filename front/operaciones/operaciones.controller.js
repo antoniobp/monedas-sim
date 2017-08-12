@@ -54,7 +54,8 @@
                         $location.path('/');
                     })
                     .catch(function(response) {
-                        FlashService.Error(response.data.message);
+                        console.log(response);
+                        FlashService.Error(response.data.message || response.data.detail);
                         vm.dataLoading = false;
                     });
             } else {
