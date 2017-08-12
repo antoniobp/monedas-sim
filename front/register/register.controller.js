@@ -37,7 +37,7 @@
                     })
                     .catch(function(response) {
                         console.log(response);
-                        FlashService.Error(response.message);
+                        FlashService.Error(response.data.message);
                         vm.dataLoading = false;
                     });
             } else edit();
