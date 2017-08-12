@@ -55,8 +55,8 @@ class UserSerializer(serializers.ModelSerializer):
         :param value:
         :return:
         """
-        if value < 0:
-            raise serializers.ValidationError("El balance no puede ser negativo")
+        if value <= 0:
+            raise serializers.ValidationError("El balance no puede ser negativo ni cero")
 
         return value
 
@@ -83,3 +83,23 @@ class OperacionSerializer(serializers.ModelSerializer):
         model = Operacion
         fields = (
             'id', 'importe', 'fecha', 'moneda', 'remitente', 'destinatario')
+
+    def create(self, validated_data):
+        """
+        Crea un objeto operacion
+        :param validated_data: los datos que fueron validados en el serializer
+        :return: objeto operacion
+        """
+        return Operacion.objects.create(**validated_data)
+
+    def validate_importe(self, value):
+        """
+        Valida que el importe sea un número positivo
+        :param value:
+        :return:
+        """
+        if float(value) <= 0:
+            raise serializers.ValidationError("El importe no puede ser negativo ni cero")
+
+        return value
+
