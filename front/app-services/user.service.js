@@ -50,7 +50,10 @@
         }
 
         function Create(user) {
-            return $http(getConfig('POST', 'usuarios/', JSON.stringify(user)));
+            var config = getConfig('POST', 'usuarios/', JSON.stringify(user));
+            config.headers["Authorization"] = 'Token ' + window.btoa(user.username + ':' + user.password);
+
+            return $http(config);
         }
 
         function Update(user) {
