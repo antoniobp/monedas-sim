@@ -29,7 +29,7 @@
                     });
                 })
                 .catch(function (e) {
-                    console.error(e);
+                    FlashService.Error(e.data.message || e.data.detail);
                 });
             
             UserService.GetMonedas()
@@ -38,6 +38,7 @@
                 })
                 .catch(function (e) {
                     console.error(e);
+                    FlashService.Error(e.data.message || e.data.detail);
                 });
         }
 

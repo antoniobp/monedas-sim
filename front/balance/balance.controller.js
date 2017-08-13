@@ -21,7 +21,8 @@
                     vm.user = user.data;
                 })
                 .catch(function (e) {
-                    console.error(e);
+                    FlashService.Error(e.data.message || e.data.detail);
+                    $location.path('/');
                 });
 
             UserService.GetMonedas()
@@ -29,7 +30,8 @@
                     vm.monedas = response.data;
                 })
                 .catch(function (e) {
-                    console.error(e);
+                    FlashService.Error(e.data.message || e.data.detail);
+                    $location.path('/');
                 });
         }
     }

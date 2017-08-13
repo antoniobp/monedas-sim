@@ -28,7 +28,7 @@
                     loadOperacionesEntrantes(vm.user.id);
                 })
                 .catch(function (e) {
-                    console.error(e);
+                    FlashService.Error(e.data.message || e.data.detail);
                 });
         }
 
@@ -38,7 +38,7 @@
                     vm.operacionesEnviadas = op.data;
                 })
                 .catch(function (e) {
-                    console.error(e);
+                    FlashService.Error(e.data.message || e.data.detail);
                 });
         }
 
@@ -48,7 +48,7 @@
                     vm.operacionesEntrantes = op.data;
                 })
                 .catch(function (e) {
-                    console.error(e);
+                    FlashService.Error(e.data.message || e.data.detail);
                 });
         }
 
