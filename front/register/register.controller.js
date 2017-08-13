@@ -22,7 +22,8 @@
                     vm.user = response.data;
                 })
                 .catch(function (response) {
-                    console.error(response);
+                    FlashService.Error(response.data.message || response.data.detail);
+                    $location.path('/');
                 });
         }
 
