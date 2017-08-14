@@ -17,6 +17,9 @@
 
         initController();
 
+        /**
+         * Completa los datos iniciales para el controlador (usuarios y monedas)
+         */
         function initController() {
 
             UserService.GetAll()
@@ -42,6 +45,9 @@
                 });
         }
 
+        /**
+         * Crea una operacion para un usuario o si no es posible, utiliza el FlashService para notificar un error
+         */
         function create() {
             vm.dataLoading = true;
 

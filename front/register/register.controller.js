@@ -16,6 +16,9 @@
             initUser();
         }
 
+        /**
+         * Si la vista es de edicion, inicializa el usuario a editar
+         */
         function initUser() {
             UserService.GetById(vm.id)
                 .then(function (response) {
@@ -27,6 +30,9 @@
                 });
         }
 
+        /**
+         * Crea un usuario o si es vista de edicion, llama a edit()
+         */
         function register() {
             vm.dataLoading = true;
 
@@ -44,6 +50,9 @@
             } else edit();
         }
 
+        /**
+         * Edita un usuario
+         */
         function edit() {
             UserService.Update(vm.user)
                 .then(function (response) {

@@ -19,6 +19,9 @@
 
         initController();
 
+        /**
+         * Completa los datos iniciales para el controlador
+         */
         function initController() {
 
             UserService.GetByUsername($rootScope.globals.currentUser.username)
@@ -32,6 +35,9 @@
                 });
         }
 
+        /**
+         * Carga las operaciones que el usuario realizo
+         */
         function loadOperacionesEnviadas(id) {
             UserService.GetOperacionesEnviadas(id)
                 .then(function (op) {
@@ -42,6 +48,9 @@
                 });
         }
 
+        /**
+         * Carga las operaciones que el usuario recibio
+         */
         function loadOperacionesEntrantes(id) {
             UserService.GetOperacionesRecibidas(id)
                 .then(function (op) {
@@ -52,18 +61,30 @@
                 });
         }
 
+        /**
+         * Utiliza el metodo de AuthenticationService para cerrar sesion
+         */
         function logout() {
             AuthenticationService.Logout();
         }
 
+        /**
+         * Redirige a la vista de agregar una nueva operacion
+         */
         function addNew() {
             $location.path('/user/' + vm.user.id + '/operaciones/new');
         }
 
+        /**
+         * Redirige a la vista de editar los datos de usuario
+         */
         function editUser() {
             $location.path('/user/' + vm.user.id);
         }
 
+        /**
+         * Redirige a la vista del detalle del balance del usuario
+         */
         function balanceDetail() {
             $location.path('/user/' + vm.user.id + '/balance');
         }

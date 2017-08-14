@@ -7,7 +7,10 @@
 
     AuthenticationService.$inject = ['$location', '$http', '$cookies', '$rootScope', '$timeout', 'UserService'];
 
-    function getAjaxConfig(method, endpoint, data) {
+    /**
+     * Obtiene la configuracion de la request
+     */
+    function getConfig(method, endpoint, data) {
         return {
             url: '/' + (endpoint || ''),
             method: method,
@@ -30,10 +33,13 @@
 
         return service;
 
+        /**
+         * Loguea a un usuario en el sistema
+         */
         function Login(username, password, callback) {
 
             var data = { "username": username, "password": password };
-            $http(getAjaxConfig('POST', 'login/', JSON.stringify(data)))
+            $http(getConfig('POST', 'login/', JSON.stringify(data)))
                 .then(function(response) {
                     callback({ success: true });
                 })
@@ -43,9 +49,12 @@
 
         }
 
+        /**
+         * Cierra la sesion de un usuario
+         */
         function Logout() {
 
-            $http(getAjaxConfig('POST', 'logout/'))
+            $http(getConfig('POST', 'logout/'))
                 .then(function(response) {
                     ClearCredentials();
                     $location.path('/login');
@@ -56,6 +65,9 @@
 
         }
 
+        /**
+         * Setea cookies
+         */
         function SetCredentials(username, password) {
             var authdata = Base64.encode(username + ':' + password);
 
@@ -73,6 +85,9 @@
             $cookies.putObject('globals', $rootScope.globals, { expires: cookieExp });
         }
 
+        /**
+         * Borra cookies
+         */
         function ClearCredentials() {
             $rootScope.globals = {};
             $cookies.remove('globals');
@@ -80,6 +95,7 @@
         }
     }
 
+    //Encoding para Authorization header
     var Base64 = {
 
         keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',

@@ -15,6 +15,9 @@
             AuthenticationService.ClearCredentials();
         })();
 
+        /**
+         * Loguea un usuario o si no es posible, utiliza el FlashService para notificar un error
+         */
         function login() {
             vm.dataLoading = true;
             AuthenticationService.Login(vm.username, vm.password, function (response) {

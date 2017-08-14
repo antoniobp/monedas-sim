@@ -283,7 +283,6 @@ def moneda_lista(request):
     """
     Lista (GET) todas las monedas disponibles
     :param request:
-    :param id_user: el id del usuario
     :return:
     """
 

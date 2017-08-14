@@ -16,6 +16,9 @@
 
         return service;
 
+        /**
+         * Elimina el mensaje cuando cambia la vista y el mensaje no corresponde ser mantenido
+         */
         function initService() {
             $rootScope.$on('$locationChangeStart', function () {
                 clearFlashMessage();
@@ -33,6 +36,9 @@
             }
         }
 
+        /**
+         * Muestra un mensaje de exito en la vista
+         */
         function Success(message, keepAfterLocationChange) {
             $rootScope.flash = {
                 message: message,
@@ -41,6 +47,9 @@
             };
         }
 
+        /**
+         * Muestra un mensaje de error en la vista
+         */
         function Error(message, keepAfterLocationChange) {
             $rootScope.flash = {
                 message: message,

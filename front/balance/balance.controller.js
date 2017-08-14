@@ -14,6 +14,9 @@
 
         initController();
 
+        /**
+         * Completa los datos iniciales para el controlador (usuario y monedas)
+         */
         function initController() {
 
             UserService.GetById($routeParams.id)
