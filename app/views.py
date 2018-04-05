@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 import json
 import decimal
+import logging
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
