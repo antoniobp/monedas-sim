@@ -32,6 +32,7 @@ def auth_login(request):
         if user is None:
             return Response({"message": "Error en los datos ingresados"}, status=status.HTTP_400_BAD_REQUEST)
     except KeyError:
+        logging.info("user %s %s" % (data['username'], data['password']))
         return Response({"message": "Falla en autenticacion"}, status=status.HTTP_400_BAD_REQUEST)
 
     if user.is_staff:
