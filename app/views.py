@@ -5,8 +5,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -101,8 +103,7 @@ def usuario_lista(request):
             if not data:
                 return Response({"message": "No se enviaron datos"}, status=status.HTTP_400_BAD_REQUEST)
 
-            # ENCRIPTA EL PASSWORD
-            data['password'] = make_password(data['password'])
+            data['password'] = data['password'] 
             serializer = UserSerializer(data=data)
 
             if serializer.is_valid():
@@ -178,15 +179,14 @@ def usuario_datos(request, id_user):
 
     # BORRA UN USUARIO
     elif request.method == 'DELETE':
-        if usuario.validar_delete():
-            usuario.user.delete()
-            usuario.delete()
-            return Response({"message": "El usuario ha sido borrado"}, status=status.HTTP_204_NO_CONTENT)
-        return Response({"message": "No puede borrar"}, status=status.HTTP_400_BAD_REQUEST)
+        usuario.user.delete()
+        usuario.delete()
+        return Response({"message": "El usuario ha sido borrado"}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET', 'POST'])
 @permission_classes((IsAuthenticated, ))
+@csrf_exempt
 def operacion_lista(request, id_user, tipo_operacion):
     """
     Lista (GET) todas las operaciones hechas por un usuario o crea (POST) una nueva
@@ -208,11 +208,8 @@ def operacion_lista(request, id_user, tipo_operacion):
 
         operaciones_json = []
         lista_operaciones = Operacion.objects.all()
-        for operacion in lista_operaciones:
-            if int(tipo_operacion) == 1 and int(operacion.remitente.id) == int(id_user):
-                operaciones_json.append(operacion.as_json())
-            elif int(tipo_operacion) == 0 and int(operacion.destinatario.id) == int(id_user):
-                operaciones_json.append(operacion.as_json())
+        for operacion in lista_operaciones:            
+            operaciones_json.append(operacion.as_json())            
         return Response(operaciones_json)
 
     # CREA UNA OPERACION
@@ -228,11 +225,13 @@ def operacion_lista(request, id_user, tipo_operacion):
             operacion.destinatario = get_object_or_404(Usuario, pk=data['destinatario'])
             operacion.remitente = get_object_or_404(Usuario, pk=data['remitente'])
             operacion.moneda = get_object_or_404(Moneda, pk=data['moneda'])
-
+            
             operacion.destinatario.balance += operacion.moneda.valor_dolar * decimal.Decimal(data['importe'])
             operacion.destinatario.save()
-            operacion.remitente.balance -= operacion.moneda.valor_dolar * decimal.Decimal(data['importe'])
-            operacion.remitente.save()
+
+            with transaction.atomic():
+                operacion.remitente.balance += operacion.moneda.valor_dolar * decimal.Decimal(data['importe'])
+                operacion.remitente.save()
 
             serializer = OperacionSerializer(operacion, data=data)
 
@@ -289,6 +288,11 @@ def moneda_lista(request):
     # LISTA LAS MONEDAS
     if request.method == 'GET':
 
-        lista_monedas = Moneda.objects.all()
-        serializers = MonedaSerializer(lista_monedas, many=True)
+        if 'moneda' in request.GET:
+            moneda_int = eval(request.GET.get('moneda'))
+            lista_monedas = Moneda.objects.filter(id=moneda_int)
+        else:
+            lista_monedas = Moneda.objects.all()
+        
+        serializers = MonedaSerializer(lista_monedas, many=True)        
         return Response(serializers.data)

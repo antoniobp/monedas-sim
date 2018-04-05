@@ -52,7 +52,7 @@
             vm.dataLoading = true;
 
             vm.operacion.remitente = $routeParams.id;
-            vm.operacion.moneda = JSON.parse(vm.operacion.moneda.replace('\\/g', ""));
+            vm.operacion.moneda = JSON.parse(vm.operacion.moneda.replace('\\/g', ""));            
             if (vm.user.balance >= vm.operacion.importe * vm.operacion.moneda.valor_dolar) {
                 vm.operacion.moneda = vm.operacion.moneda.id;
                 UserService.CreateOperacion($routeParams.id, vm.operacion)

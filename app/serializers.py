@@ -91,15 +91,3 @@ class OperacionSerializer(serializers.ModelSerializer):
         :return: objeto operacion
         """
         return Operacion.objects.create(**validated_data)
-
-    def validate_importe(self, value):
-        """
-        Valida que el importe sea un número positivo
-        :param value:
-        :return:
-        """
-        if float(value) <= 0:
-            raise serializers.ValidationError("El importe no puede ser negativo ni cero")
-
-        return value
-
