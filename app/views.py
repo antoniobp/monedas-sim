@@ -138,11 +138,6 @@ def usuario_datos(request, id_user):
         usuario = get_object_or_404(User, username=id_user)
     usuario = get_object_or_404(Usuario, user_id=usuario.id)
 
-    # VERIFICA QUE EL USUARIO ESTE ACCEDIENDO A SUS DATOS Y NO A LOS DE OTRO
-    if not request.user.is_staff:
-        if request.user.id != usuario.user_id:
-            return Response({"message": "No tiene permisos para acceder"}, status=status.HTTP_401_UNAUTHORIZED)
-
     # OBTIENE UN USUARIO
     if request.method == 'GET':
         return Response({
